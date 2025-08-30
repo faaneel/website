@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Загрузка и обрезка изображения</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    #canvas {
+      margin-top: 10px;
+      border: 1px solid black;
+      max-width: 100%;
+    }
+    input, button {
+      padding: 6px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Обрезка изображения из URL</h1>
+  <input type="url" id="imageUrl" placeholder="Введите URL изображения" style="width: 300px;">
+  <button onclick="loadAndCropImage()">Загрузить и обрезать</button>
+  <br>
+  <canvas id="canvas"></canvas>
+
+  <script>
+    function loadAndCropImage() {
+      const url = document.getElementById('imageUrl').value;
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+
+      const img = new Image();
+      img.crossOrigin = "Anonymous"; // Разрешаем работу с кросс-доменными изображениями
+      img.onload = function() {
+        // Определяем квадрат для обрезки (по центру изображения)
+        const cropSize = Math.min(img.width, img.height);
+        const left = (img.width - cropSize) / 2;
+        const top = (img.height - cropSize) / 2;
+
+        // Задаем размер canvas под квадрат
+        canvas.width = cropSize;
+        canvas.height = cropSize;
+
+        // Рисуем обрезанное изображение
+        ctx.drawImage(
+          img,
+          left, top, cropSize, cropSize, // область из исходника
+          0, 0, cropSize, cropSize       // куда нарисовать на canvas
+        );
+
+        // Если нужно сохранить результат:
+        // const dataUrl = canvas.toDataURL('image/png');
+        // console.log(dataUrl);
+      };
+      img.onerror = function() {
+        alert("Не удалось загрузить изображение. Проверьте URL.");
+      };
+      img.src = url;
+    }
+  </script>
+</body>
+</html>
